@@ -2,6 +2,28 @@
 ### Do not make changes to this file directly
 
 
+type Post {
+  body: String
+  id: Int
+  published: Boolean
+  title: String
+}
+
 type Query {
-  ok: Boolean!
+  drafts: [Post]!
+  getUsers: [User]!
+}
+
+type User {
+  """User email"""
+  email: String
+
+  """First Name"""
+  firstName: String
+
+  """User ID"""
+  id: Int
+
+  """Last Name"""
+  lastName: String
 }

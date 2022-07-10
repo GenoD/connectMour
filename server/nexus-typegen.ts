@@ -28,7 +28,19 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  Post: { // root type
+    body?: string | null; // String
+    id?: number | null; // Int
+    published?: boolean | null; // Boolean
+    title?: string | null; // String
+  }
   Query: {};
+  User: { // root type
+    email?: string | null; // String
+    firstName?: string | null; // String
+    id?: number | null; // Int
+    lastName?: string | null; // String
+  }
 }
 
 export interface NexusGenInterfaces {
@@ -42,14 +54,40 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  Post: { // field return type
+    body: string | null; // String
+    id: number | null; // Int
+    published: boolean | null; // Boolean
+    title: string | null; // String
+  }
   Query: { // field return type
-    ok: boolean; // Boolean!
+    drafts: Array<NexusGenRootTypes['Post'] | null>; // [Post]!
+    getUsers: Array<NexusGenRootTypes['User'] | null>; // [User]!
+  }
+  User: { // field return type
+    email: string | null; // String
+    firstName: string | null; // String
+    id: number | null; // Int
+    lastName: string | null; // String
   }
 }
 
 export interface NexusGenFieldTypeNames {
+  Post: { // field return type name
+    body: 'String'
+    id: 'Int'
+    published: 'Boolean'
+    title: 'String'
+  }
   Query: { // field return type name
-    ok: 'Boolean'
+    drafts: 'Post'
+    getUsers: 'User'
+  }
+  User: { // field return type name
+    email: 'String'
+    firstName: 'String'
+    id: 'Int'
+    lastName: 'String'
   }
 }
 
