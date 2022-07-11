@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import type { NextPage } from 'next'
 import { io } from "socket.io-client";
-import styles from '../../styles/Home.module.css'
+import Column from './column'
 
+const DEFAULT_NUM_COLUMNS = 12
 
 const Home: NextPage = () => {
   useEffect(() => {
@@ -11,8 +12,16 @@ const Home: NextPage = () => {
     console.log('Connection established via', socket)
   }, [])
   return (
-    <div className={styles.container}>
-      <h1>ConnectMour Match Page</h1>
+    <div className="p-8">
+      <h1 className="font-bold">ConnectMour Match Page</h1>
+      <div className="flex">
+        <Column />
+        <Column />
+        <Column />
+        <Column />
+        <Column />
+        <Column />
+      </div>
     </div>
   )
 }
