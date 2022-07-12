@@ -1,4 +1,4 @@
-import { Reducer, useEffect, useReducer } from 'react'
+import { Reducer, useEffect, useReducer, useState } from 'react'
 import type { NextPage } from 'next'
 import { io } from "socket.io-client";
 import Column from './column'
@@ -31,17 +31,26 @@ const reducer:Reducer<BoardInterfaces.State, BoardInterfaces.Action> = (state: B
 
 const Home: NextPage = () => {
   const [board, dispatch] = useReducer(reducer, INITIAL_BOARD_STATE)
+  const [response, setResponse] = useState();
+  // Send board state to server
+  useEffect(() => {
+
+  }, [board]);
   // TODO determine how to type the destructure of useReducer
   const { boardState, player } = board 
   useEffect(() => {
     console.log('MOUNTING!')
     const socket = io('http://localhost:5000')
+    socket.on("FromAPI", data => {
+      setResponse(data);
+    });
     console.log('Connection established via', socket)
   }, [])
 
   return (
     <div className="p-8">
       <h1 className="font-bold">ConnectMour Match Page</h1>
+      {response && <h2 className="font-bold">{response}</h2>}
       <div className="flex">
         {
           boardState.map((val) => {
