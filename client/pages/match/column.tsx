@@ -4,7 +4,7 @@ interface Props {
   columnNum: number,
   columnState: BoardInterfaces.BoardSpace[]
   player: 1 | 2,
-  dispatch: React.Dispatch<BoardInterfaces.Action>
+  handlePlayerMove: (columnNum: number, player: 1 | 2) => void;
 }
 
 const handleColor = (value: 0 | 1 | 2) => {
@@ -18,19 +18,15 @@ const handleColor = (value: 0 | 1 | 2) => {
   }
 }
 
-const Column: React.FC<Props> = ({ columnNum, columnState, player, dispatch }) => {
+const Column: React.FC<Props> = ({ columnNum, columnState, player, handlePlayerMove }) => {
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
 
-    const nextOpenSpace = columnState.map(val => val.value).indexOf(0)
+    // const nextOpenSpace = columnState.map(val => val.value).indexOf(0)
     // Prevent turn
-    if (nextOpenSpace === -1) return
+    // if (nextOpenSpace === -1) return
 
-    dispatch({ payload: {
-      columnNum,
-      player,
-      nextOpenSpace,
-    }})
+    handlePlayerMove(columnNum, player)
   };
 
   return (

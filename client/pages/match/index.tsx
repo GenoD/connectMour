@@ -1,6 +1,6 @@
-import { Reducer, useEffect, useReducer, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { NextPage } from 'next'
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import Column from './column'
 import * as BoardInterfaces from './board_interfaces'
 
@@ -21,26 +21,32 @@ const INITIAL_BOARD_STATE: BoardInterfaces.State = {
   })
 }
 
-const reducer:Reducer<BoardInterfaces.State, BoardInterfaces.Action> = (state: BoardInterfaces.State, action: BoardInterfaces.Action) => {
-  const newState = { ...state }
-  const { columnNum, player, nextOpenSpace } = action.payload
-  newState.boardState[columnNum].column[nextOpenSpace].value = player
-  newState.player = player === 1 ? 2 : 1
-  return newState
-}
-
 const Home: NextPage = () => {
-  const [board, dispatch] = useReducer(reducer, INITIAL_BOARD_STATE)
+  const [board, setBoard] = useState(INITIAL_BOARD_STATE)
   const [response, setResponse] = useState();
+  const [socket, setSocket] = useState<Socket | undefined>();
+  const { boardState, player } = board 
+
+  const handlePlayerMove = useCallback((columnNum: number, player: 1 | 2):void => {
+    // setBoardState
+    const nextOpenSpace = boardState[columnNum].column.map(val => val.value).indexOf(0)
+    if (nextOpenSpace === -1) return
+
+    let newState = { ...board }
+    newState.boardState[columnNum].column[nextOpenSpace].value = player
+    newState.player = player === 1 ? 2 : 1
+    setBoard(newState)
+  }, [board, boardState])
   // Send board state to server
   useEffect(() => {
-
+    
   }, [board]);
   // TODO determine how to type the destructure of useReducer
-  const { boardState, player } = board 
+
   useEffect(() => {
     console.log('MOUNTING!')
     const socket = io('http://localhost:5000')
+    setSocket(socket)
     socket.on("FromAPI", data => {
       setResponse(data);
     });
@@ -55,7 +61,7 @@ const Home: NextPage = () => {
         {
           boardState.map((val) => {
             const { columnId, column } = val
-            return <Column key={columnId} columnNum={columnId} columnState={column} player={player} dispatch={dispatch} />
+            return <Column key={columnId} columnNum={columnId} columnState={column} player={player} handlePlayerMove={handlePlayerMove} />
           })
         }
       </div>
