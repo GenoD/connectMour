@@ -36,7 +36,9 @@ const Home: NextPage = () => {
     newState.boardState[columnNum].column[nextOpenSpace].value = player
     newState.player = player === 1 ? 2 : 1
     setBoard(newState)
-  }, [board, boardState])
+
+    socket.emit('player-move', { test: 'value here '})
+  }, [board, boardState, socket])
   // Send board state to server
   useEffect(() => {
     

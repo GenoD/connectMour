@@ -13,6 +13,9 @@ io.on("connection", (socket) => {
   if (interval) {
     clearInterval(interval)
   }
+  socket.on('player-move', (socket) => {
+    console.log('player move sent')
+  })
   // interval = setInterval(() => getApiAndEmit(socket), 1000)
   getApiAndEmit(socket)
   socket.on("disconnect", () => {
@@ -20,6 +23,7 @@ io.on("connection", (socket) => {
     clearInterval(interval)
   })
 })
+
 
 const getApiAndEmit = (socket:Socket) => {
   const response = new Date()
