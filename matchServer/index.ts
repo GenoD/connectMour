@@ -1,6 +1,22 @@
 import { Server, Socket } from "socket.io"
+import MatchCache from "./utils/matchCache"
+import MatchQueue from "./utils/matchQueue"
 
-const io = new Server({
+interface ServerToClientEvents {
+  FromAPI: () => void
+}
+
+interface ClientToServer {
+  playerMove: (moveInfo: {
+    test: string
+  }) => void
+}
+
+interface SocketData {
+  userId: number
+}
+
+const io = new Server<ClientToServer, ServerToClientEvents, SocketData>({
   cors: {
     origin: "http://localhost:3000"
   }
@@ -8,13 +24,20 @@ const io = new Server({
 
 let interval:ReturnType<typeof setTimeout>
 
-io.on("connection", (socket) => {
-  console.log("New client connected")
+const Queue = new MatchQueue();
+const Matches = new MatchCache();
+
+io.on("connection", (socket) => {1
+  Queue.addPlayerToQueue({
+    playerId: socket.handshake.query.userId as string,
+    socketId: socket.id,
+  })
+
   if (interval) {
     clearInterval(interval)
   }
-  socket.on('player-move', (socket) => {
-    console.log('player move sent')
+  socket.on('playerMove', (moveInfo) => {
+    console.log('player move sent', moveInfo.test)
   })
   // interval = setInterval(() => getApiAndEmit(socket), 1000)
   getApiAndEmit(socket)
@@ -31,10 +54,4 @@ const getApiAndEmit = (socket:Socket) => {
   socket.emit("FromAPI", response)
 }
 
-const add = function (num: number, num2: number):number {
-  return num + num2
-}
-
-
-console.log('now listening!', add(1, 2))
 io.listen(5000)
