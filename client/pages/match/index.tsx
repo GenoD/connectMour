@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState, useContext } from 'react'
 import type { NextPage } from 'next'
+import Image from 'next/image'
 import { io, Socket } from 'socket.io-client'
 
 import PlayerContext from '../../context/PlayerContext'
 import Column from './column'
 import * as BoardInterfaces from './board_interfaces'
+import { useAuth0 } from '@auth0/auth0-react'
 
 const DEFAULT_NUM_COLUMNS = 7
 const DEFAULT_NUM_ROWS = 7
@@ -24,6 +26,12 @@ const INITIAL_BOARD_STATE: BoardInterfaces.State = {
 }
 
 const Home: NextPage = () => {
+  const { user, isAuthenticated, isLoading, logout } = useAuth0()
+  console.log('auth0', {
+    user,
+    isAuthenticated,
+    isLoading,
+  })
   const playerInfo = useContext(PlayerContext)
   const [board, setBoard] = useState(INITIAL_BOARD_STATE)
   const [response, setResponse] = useState()
@@ -53,7 +61,7 @@ const Home: NextPage = () => {
     console.log('MOUNTING!')
     const socket = io('http://localhost:5000', {
       query: {
-        userId: playerInfo.userId,
+        userId: user?.sub,
       },
     })
     setSocket(socket)
@@ -67,6 +75,13 @@ const Home: NextPage = () => {
     <div className="p-8">
       <h1 className="font-bold">ConnectMour Match Page</h1>
       {response && <h2 className="font-bold">{response}</h2>}
+      {isAuthenticated && (
+        <div>
+          <Image width={50} height={50} src={user.picture} alt={user.name} />
+          <h2>{user.name}</h2>
+          <p>{user.email}</p>
+        </div>
+      )}
       <div className="flex">
         {boardState.map((val) => {
           const { columnId, column } = val
@@ -81,6 +96,7 @@ const Home: NextPage = () => {
           )
         })}
       </div>
+      <button onClick={() => logout({ returnTo: 'http://localhost:3000' })}>Log Out</button>
     </div>
   )
 }

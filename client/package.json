@@ -10,6 +10,7 @@
     "prettier": "prettier --check"
   },
   "dependencies": {
+    "@auth0/auth0-react": "^1.10.2",
     "next": "12.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
