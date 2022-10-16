@@ -10,6 +10,7 @@ interface ClientToServer {
   playerMove: (moveInfo: {
     test: string
   }) => void
+  queueForMatch: () => void
 }
 
 interface SocketData {
@@ -28,11 +29,6 @@ const Queue = new MatchQueue();
 const Matches = new MatchCache();
 
 io.on("connection", (socket) => {1
-  Queue.addPlayerToQueue({
-    playerId: socket.handshake.query.userId as string,
-    socketId: socket.id,
-  })
-
   if (interval) {
     clearInterval(interval)
   }
@@ -40,10 +36,18 @@ io.on("connection", (socket) => {1
     console.log('player move sent', moveInfo.test)
   })
   // interval = setInterval(() => getApiAndEmit(socket), 1000)
-  getApiAndEmit(socket)
+  // getApiAndEmit(socket)
   socket.on("disconnect", () => {
     console.log("Client disconnected")
     clearInterval(interval)
+  })
+
+  socket.on('queueForMatch', () => {
+    Queue.addPlayerToQueue({
+      playerId: socket.handshake.query.userId as string,
+      socketId: socket.id,
+    })
+  
   })
 })
 

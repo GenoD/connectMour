@@ -8,15 +8,11 @@ function MyApp({ Component, pageProps }: AppProps) {
     <Auth0Provider
       domain="dev-ujjm7533.us.auth0.com"
       clientId="MKzxSndWAeMJrQXuEXYxpNEPxdPJRhr5"
-      redirectUri={'http://localhost:3000/match'}
+      redirectUri={'http://localhost:3000/lobby'}
     >
-      <PlayerContext.Provider
-        value={{
-          userId: Math.floor(Math.random() * 10000),
-        }}
-      >
+      <PlayerContext>
         <Component {...pageProps} />
-      </PlayerContext.Provider>
+      </PlayerContext>
     </Auth0Provider>
   )
 }

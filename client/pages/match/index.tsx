@@ -26,7 +26,12 @@ const INITIAL_BOARD_STATE: BoardInterfaces.State = {
 }
 
 const Home: NextPage = () => {
-  const { user, isAuthenticated, isLoading, logout } = useAuth0()
+  const { user, isAuthenticated, isLoading, logout } = useAuth0<{
+    picture: string
+    name: string
+    email: string
+    sub: string
+  }>()
   console.log('auth0', {
     user,
     isAuthenticated,
@@ -69,13 +74,13 @@ const Home: NextPage = () => {
       setResponse(data)
     })
     console.log('Connection established via', socket)
-  }, [])
+  }, [user?.sub])
 
   return (
     <div className="p-8">
       <h1 className="font-bold">ConnectMour Match Page</h1>
       {response && <h2 className="font-bold">{response}</h2>}
-      {isAuthenticated && (
+      {isAuthenticated && user && (
         <div>
           <Image width={50} height={50} src={user.picture} alt={user.name} />
           <h2>{user.name}</h2>
